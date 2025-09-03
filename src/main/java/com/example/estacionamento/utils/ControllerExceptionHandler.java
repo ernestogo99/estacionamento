@@ -1,12 +1,16 @@
 package com.example.estacionamento.utils;
 
+import com.example.estacionamento.exceptions.EstabelecimentoNaoEncontradoException;
 import com.example.estacionamento.exceptions.VeiculoNaoEncontradoException;
 import com.example.estacionamento.shared.dto.response.ExceptionDTO;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+
+import java.util.stream.Collectors;
 
 @RestControllerAdvice
 public class ControllerExceptionHandler {
@@ -20,6 +24,14 @@ public class ControllerExceptionHandler {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(exceptionDTO);
     }
 
+    @ExceptionHandler(EstabelecimentoNaoEncontradoException.class)
+    public ResponseEntity<ExceptionDTO> threatEstabelecimentoNotFound(EstabelecimentoNaoEncontradoException exception){
+        ExceptionDTO exceptionDTO=new ExceptionDTO(
+                exception.getMessage(),
+                HttpStatus.NOT_FOUND.toString());
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(exceptionDTO);
+    }
+
     @ExceptionHandler(EntityNotFoundException.class)
     public ResponseEntity threat404(EntityNotFoundException exception){
         return ResponseEntity.notFound().build();
@@ -30,5 +42,19 @@ public class ControllerExceptionHandler {
         ExceptionDTO exceptionDTO=new ExceptionDTO(exception.getMessage(),"500");
         return ResponseEntity.internalServerError().body(exceptionDTO);
     }
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<ExceptionDTO> handleValidationExceptions(MethodArgumentNotValidException ex) {
+
+        String errors = ex.getBindingResult()
+                .getFieldErrors()
+                .stream()
+                .map(error -> error.getField() + ": " + error.getDefaultMessage())
+                .collect(Collectors.joining("; "));
+
+        ExceptionDTO response = new ExceptionDTO(errors, HttpStatus.BAD_REQUEST.toString());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+    }
+
 
 }
