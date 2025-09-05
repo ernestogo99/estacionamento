@@ -28,7 +28,7 @@ public class EstabelecimentoService {
         return this.estabelecimentoMapper.toResponseDTO(save);
     }
 
-    private Estabelecimento getEstabelecimento(Long id){
+    public Estabelecimento getEstabelecimento(Long id){
         return this.estabelecimentoRepository.findById(id)
                 .orElseThrow(()->new EstabelecimentoNaoEncontradoException());
     }

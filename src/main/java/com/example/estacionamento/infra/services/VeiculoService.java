@@ -56,7 +56,7 @@ public class VeiculoService {
         return this.veiculoMapper.toResponseDTO(atualizado);
     }
 
-    private Veiculo getVehicle(Long id){
+    public Veiculo getVehicle(Long id){
         return this.veiculoRepository.findById(id).orElseThrow(()->new VeiculoNaoEncontradoException());
     }
 
