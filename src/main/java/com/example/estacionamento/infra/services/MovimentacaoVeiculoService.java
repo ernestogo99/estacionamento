@@ -44,23 +44,22 @@ public class MovimentacaoVeiculoService {
         Estabelecimento estabelecimento=this.estabelecimentoService.getEstabelecimento(requesDTO.estabelecimentoId());
         if(estabelecimento.getQtdDeVagasParaCarro()==0 && veiculo.getTipo().equals(TipoVeiculo.CARRO)){
             throw  new EstabelecimentoLotadoException("Não há mais vagas para carros");
-        }
-
-        if(estabelecimento.getQtdDeVagasParaMoto()==0 && veiculo.getTipo().equals(TipoVeiculo.MOTO)){
+        } else if(estabelecimento.getQtdDeVagasParaMoto()==0 && veiculo.getTipo().equals(TipoVeiculo.MOTO)){
             throw  new EstabelecimentoLotadoException("Não há mais vagas para motos");
         }
+
         MovimentacaoVeiculo movimentacaoVeiculo=new MovimentacaoVeiculo();
         movimentacaoVeiculo.setVeiculo(veiculo);
         movimentacaoVeiculo.setEstabelecimento(estabelecimento);
         movimentacaoVeiculo.setAtivo(true);
         movimentacaoVeiculo.setHorarioEntrada(LocalDateTime.now());
+
         if(veiculo.getTipo().equals(TipoVeiculo.CARRO)){
             estabelecimento.setQtdDeVagasParaCarro(estabelecimento.getQtdDeVagasParaCarro() -1);
-        }
-
-        if(veiculo.getTipo().equals(TipoVeiculo.MOTO)){
+        } else if(veiculo.getTipo().equals(TipoVeiculo.MOTO)){
             estabelecimento.setQtdDeVagasParaMoto(estabelecimento.getQtdDeVagasParaMoto() -1 );
         }
+
         this.estabelecimentoRepository.save(estabelecimento);
         MovimentacaoVeiculo save=this.movimentacaoRepository.save(movimentacaoVeiculo);
         return this.movimentacaoMapper.toResponseDTO(save);

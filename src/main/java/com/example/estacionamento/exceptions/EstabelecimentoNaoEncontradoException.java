@@ -1,6 +1,8 @@
 package com.example.estacionamento.exceptions;
 
-public class EstabelecimentoNaoEncontradoException extends RuntimeException {
+import jakarta.persistence.EntityNotFoundException;
+
+public class EstabelecimentoNaoEncontradoException extends EntityNotFoundException {
 
     public EstabelecimentoNaoEncontradoException(){
         super("Estabelecimento não encontrado");
