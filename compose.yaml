@@ -1,0 +1,41 @@
+version: '3.9'
+
+services:
+  postgres:
+    image: postgres:17.4-alpine
+    shm_size: 182m
+    ports:
+      - '5432:5432'
+    environment:
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-mysecret}
+      - POSTGRES_USER=${POSTGRES_USER:-myuser}
+      - POSTGRES_DB=${POSTGRES_DB:-estacionamento}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready" ]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: spring-boot-estacionamento-api
+    ports:
+      - "8080:8080"
+    depends_on:
+      - postgres
+    profiles: [ api ]
+    env_file:
+      - .env.properties
+    environment:
+      - DATASOURCE_HOST=${DATASOURCE_HOST:-postgres}
+      - DATASOURCE_DATABASE=${DATASOURCE_DATABASE:-estacionamento}
+      - DATASOURCE_PORT=${DATASOURCE_PORT:-5432}
+      - DATASOURCE_USER=${DATASOURCE_USER:-myuser}
+      - DATASOURCE_PASSWORD=${DATASOURCE_PASSWORD:-mysecret}
+
+volumes:
+  postgres_data:

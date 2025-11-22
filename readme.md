@@ -25,6 +25,7 @@ com.example.estacionamento/
 - PostgreSQL:Banco de dados relacional escolhido para o sistema
 - Java: Linguagem de programação para o back-end
 - Spring boot: Framework utilizado para o desenvolvimento de apis
+- Docker: Plataforma utilizada para virtualizar a aplicação
 
 ## Destaques do projeto
 
